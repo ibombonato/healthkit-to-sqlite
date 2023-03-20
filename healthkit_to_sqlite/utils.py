@@ -22,7 +22,6 @@ def find_all_tags(fp, tags, progress_callback=None):
 def convert_xml_to_sqlite(fp, db, progress_callback=None, zipfile=None):
     activity_summaries = []
     records = []
-    i = 10_000_000
     for tag, el in find_all_tags(
         fp, {"Record", "Workout", "ActivitySummary"}, progress_callback
     ):
@@ -36,15 +35,11 @@ def convert_xml_to_sqlite(fp, db, progress_callback=None, zipfile=None):
                 if "HKExternalUUID" in el:
                     el["id"] = el["HKExternalUUID"]
                 else:
-                    #Generate Fake ID and print some sample
-                    i += 1
-                    el["id"] = i
-                    
                     # Print random sample, not all records
                     if random() < 0.05:
                         print("No id found for record:")
                         print(dict(el.items()))
-                    #continue
+                    continue
             workout_to_db(el, db, zipfile)
         elif tag == "Record":
             record = dict(el.attrib)
