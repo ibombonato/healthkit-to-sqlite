@@ -1,5 +1,6 @@
 from xml.etree import ElementTree as ET
-
+import uuid
+from random import random
 
 def find_all_tags(fp, tags, progress_callback=None):
     parser = ET.XMLPullParser(("start", "end"))
@@ -35,9 +36,14 @@ def convert_xml_to_sqlite(fp, db, progress_callback=None, zipfile=None):
                 if "HKExternalUUID" in el:
                     el["id"] = el["HKExternalUUID"]
                 else:
-                    print("No id found for record, skipping:")
-                    print(dict(el.items()))
-                    continue
+                    #Generate Fake ID and print some sample
+                    el["id"] = uuid.uuid4()
+                    
+                    # Print random sample, not all records
+                    if random() < 0.05:
+                        print("No id found for record:")
+                        print(dict(el.items()))
+                    #continue
             workout_to_db(el, db, zipfile)
         elif tag == "Record":
             record = dict(el.attrib)
